@@ -42,7 +42,7 @@ class LSF(SciBS):
         # TODO ask for GPUs if required.
 
         c += self.site_specific_flags(job)
-        c += ["'" + self.wrap(job) + "'"]
+        c += [self.wrap(job)]
 
         return c
 

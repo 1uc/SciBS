@@ -30,7 +30,7 @@ def test_lsf_mpi(mpi_resources):
         "-W", "03:00",
         "-R", "rusage[mem=50]",
         "-n", "10",
-        "'mpirun -np 10 foo --bar'",
+        "mpirun -np 10 foo --bar",
     ]
     # fmt: on
 
@@ -69,7 +69,7 @@ def test_eulerlsf_mpi_omp(mpi_omp_resources):
         "-R", "rusage[mem=12]",
         "-n", "12",
         "-R", "span[ptile=12]",
-        "'export OMP_NUM_THREADS=4; unset LSF_AFFINITY_HOSTFILE; mpirun -np 3 --map-by node:PE=4 foo --bar'"
+        "export OMP_NUM_THREADS=4; unset LSF_AFFINITY_HOSTFILE; mpirun -np 3 --map-by node:PE=4 foo --bar"
     ]
     # fmt: on
 
@@ -97,7 +97,7 @@ def test_eulerlsf_omp(omp_resources):
         "-R", "rusage[mem=20]",
         "-n", "6",
         "-R", "span[ptile=6]",
-        "'export OMP_NUM_THREADS=6; foo --bar'"
+        "export OMP_NUM_THREADS=6; foo --bar"
     ]
     # fmt: on
 
