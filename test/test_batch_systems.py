@@ -118,3 +118,15 @@ def test_local_omp(omp_resources):
     local.submit(job)
     assert dbg_policy.cmd == expected
     assert dbg_policy.cwd == wd
+
+
+class IncompleteSciBS(scibs.SciBS):
+    pass
+
+
+def test_scibs_interface(omp_resources):
+    job = scibs.Job(["foo", "--bar"], omp_resources, name="foo_bar")
+
+    bs = IncompleteSciBS()
+    with pytest.raises(NotImplementedError):
+        bs.submit(job)
