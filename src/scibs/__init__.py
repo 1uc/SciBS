@@ -6,8 +6,8 @@ from .job import Job
 
 from .resources import MPIResource, OMPResource, CUResource, CU
 
-from .utils import hhmm
+from .utilities import hhmm
 
-from .submission_policy import SubmissionPolicy, StdOutSubmissionPolicy
-from .submission_policy import SubprocessSubmissionPolicy, DebugSubmissionPolicy
-from .wrap_policy import WrapPolicy, DefaultWrapPolicy, EulerWrapPolicy
+from .submission_policies import SubmissionPolicy, StdOutSubmissionPolicy
+from .submission_policies import SubprocessSubmissionPolicy, DebugSubmissionPolicy
+from .wrap_policies import WrapPolicy, DefaultWrapPolicy, EulerWrapPolicy

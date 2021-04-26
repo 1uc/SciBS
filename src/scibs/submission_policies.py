@@ -16,11 +16,11 @@ class SubprocessSubmissionPolicy(SubmissionPolicy):
         self._kwargs = subprocess_kwargs
 
     def __call__(self, cwd, cmd):
-        subprocess.run(cmd, cwd=cwd, **self._kwargs)
+        subprocess.run(cmd, **self._kwargs)
 
 
 class StdOutSubmissionPolicy(SubmissionPolicy):
-    def __call(self, cwd, cmd):
+    def __call__(self, cwd, cmd):
         print(f"cd {cwd} && " + " ".join(cmd) + " && cd -")
 
 
