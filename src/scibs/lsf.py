@@ -30,8 +30,8 @@ class LSF(SciBS):
         if r.wall_clock is not None:
             c += ["-W", scibs.hhmm(r.wall_clock)]
 
-        if (mem := r.memory_per_core) is not None:
-            mem = mem * 1e-6
+        if r.memory_per_core is not None:
+            mem = r.memory_per_core * 1e-6
             c += ["-R", f"rusage[mem={mem:.0f}]"]
 
         assert r.n_cores is not None, "The total number of cores is mandatory."
