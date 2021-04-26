@@ -21,7 +21,10 @@ class SubprocessSubmissionPolicy(SubmissionPolicy):
 
 class StdOutSubmissionPolicy(SubmissionPolicy):
     def __call__(self, cwd, cmd):
-        print(f"cd {cwd} && " + " ".join(cmd) + " && cd -")
+        if cwd is None:
+            print(" ".join(cmd))
+        else:
+            print(f"cd {cwd} && " + " ".join(cmd) + " && cd -")
 
 
 class DebugSubmissionPolicy(SubmissionPolicy):

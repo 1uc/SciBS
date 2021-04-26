@@ -1,16 +1,41 @@
 import scibs
+import contextlib
+import io
 
 import pytest
 
 
 def test_subprocess_policy():
     policy = scibs.SubprocessSubmissionPolicy()
-    policy(".", "pwd")
+    policy(".", ["pwd"])
 
 
 def test_stdout_policy():
     policy = scibs.StdOutSubmissionPolicy()
-    policy(".", "pwd")
+
+    stdout = io.StringIO()
+    with contextlib.redirect_stdout(stdout):
+        policy(".", ["pwd"])
+
+    # strip trailing newline.
+    text = stdout.getvalue()[:-1]
+    expected = "cd . && pwd && cd -"
+
+    assert text == expected
+
+
+def test_stdout_nocwd():
+    policy = scibs.StdOutSubmissionPolicy()
+
+    stdout = io.StringIO()
+    with contextlib.redirect_stdout(stdout):
+        policy(None, ["pwd"])
+
+    # strip trailing newline.
+    text = stdout.getvalue()[:-1]
+    expected = "pwd"
+
+    assert text == expected
 
 
 class IncompleteSubmissionPolicy(scibs.SubmissionPolicy):
@@ -21,4 +46,4 @@ def test_policy_interface():
     policy = IncompleteSubmissionPolicy()
 
     with pytest.raises(NotImplementedError):
-        policy(".", "pwd")
+        policy(".", ["pwd"])
