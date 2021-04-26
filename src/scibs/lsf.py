@@ -19,7 +19,10 @@ class LSF(SciBS):
 
     def cmdline(self, job):
         r = job.resources
-        c = ["bsub", "-J", job.name]
+        c = ["bsub"]
+
+        if job.name is not None:
+            c += ["-J", job.name]
 
         if hasattr(r, "lsf_args"):
             c += r.lsf_args
