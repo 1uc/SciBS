@@ -21,7 +21,7 @@ class DefaultWrapPolicy(WrapPolicy):
             return self.wrap_cmd_omp(job)
 
         else:
-            return self.wrap_cmd_default(job.cmd)
+            return self.wrap_cmd_default(job)
 
     def wrap_cmd_mpi(self, job):
         r = job.resources

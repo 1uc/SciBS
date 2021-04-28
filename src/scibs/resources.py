@@ -146,3 +146,17 @@ class CUResource(Resource):
     def memory_per_core(self):
         total_memory = self.mem_per_cu * self.n_cus
         return total_memory / self.n_cores
+
+
+class JustCoresResource(Resource):
+    def __init__(self, n_cores=1, total_memory=None):
+        self._n_cores = n_cores
+        self._total_memory = total_memory
+
+    @property
+    def n_cores(self):
+        return self._n_cores
+
+    @property
+    def memory_per_core(self):
+        return self._total_memory / self._n_cores

@@ -51,3 +51,17 @@ def test_mpi_omp_resource():
     assert r.memory_per_core == mem_per_cu / n_threads
     assert r.needs_mpi
     assert r.needs_omp
+
+
+class IncompleteResource(scibs.Resource):
+    pass
+
+
+def test_resource_interface():
+    incomplete_resource = IncompleteResource()
+
+    with pytest.raises(NotImplemented):
+        incomplete_resource.n_cores
+
+    with pytest.raises(NotImplemented):
+        incomplete_resource.memory_per_core

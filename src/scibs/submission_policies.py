@@ -31,3 +31,12 @@ class DebugSubmissionPolicy(SubmissionPolicy):
     def __call__(self, cwd, cmd):
         self.cmd = cmd
         self.cwd = cwd
+
+
+class MultiSubmissionPolicy(SubmissionPolicy):
+    def __init__(self, policies):
+        self._policies = policies
+
+    def __call__(self, cwd, cmd):
+        for policy in self._policies:
+            policy(cwd, cmd)

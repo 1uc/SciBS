@@ -47,3 +47,23 @@ def test_policy_interface():
 
     with pytest.raises(NotImplementedError):
         policy(".", ["pwd"])
+
+
+def test_multi_policy():
+    dbg_policy = scibs.DebugSubmissionPolicy()
+    stdout_policy = scibs.StdOutSubmissionPolicy()
+
+    policy = scibs.MultiSubmissionPolicy([stdout_policy, dbg_policy])
+
+    stdout = io.StringIO()
+    with contextlib.redirect_stdout(stdout):
+        policy(".", ["pwd"])
+
+    # strip trailing newline.
+    text = stdout.getvalue()[:-1]
+    expected = "cd . && pwd && cd -"
+
+    assert text == expected
+
+    assert dbg_policy.cwd == "."
+    assert dbg_policy.cmd == ["pwd"]
