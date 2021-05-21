@@ -16,7 +16,7 @@ class SubprocessSubmissionPolicy(SubmissionPolicy):
         self._kwargs = subprocess_kwargs
 
     def __call__(self, cwd, cmd):
-        subprocess.run(cmd, **self._kwargs)
+        subprocess.run(cmd, **self._kwargs, cwd=cwd)
 
 
 class StdOutSubmissionPolicy(SubmissionPolicy):
