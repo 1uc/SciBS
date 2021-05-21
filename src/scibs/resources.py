@@ -159,4 +159,7 @@ class JustCoresResource(Resource):
 
     @property
     def memory_per_core(self):
+        if self._total_memory is None:
+            return None
+
         return self._total_memory / self._n_cores
