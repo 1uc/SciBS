@@ -57,6 +57,11 @@ class EulerLSF(LSF):
         if wrap_policy is None:
             wrap_policy = scibs.EulerWrapPolicy()
 
+        if submission_policy is None:
+            submission_policy = scibs.MultiSubmissionPolicy(
+                [scibs.StdOutSubmissionPolicy(), scibs.SubprocessSubmissionPolicy()]
+            )
+
         super().__init__(submission_policy=submission_policy, wrap_policy=wrap_policy)
 
     def site_specific_flags(self, job):
