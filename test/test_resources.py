@@ -1,6 +1,8 @@
 import datetime
 import scibs
 
+import pytest
+
 
 def test_mpi_resource():
     n_tasks = 10
@@ -60,8 +62,27 @@ class IncompleteResource(scibs.Resource):
 def test_resource_interface():
     incomplete_resource = IncompleteResource()
 
-    with pytest.raises(NotImplemented):
+    with pytest.raises(NotImplementedError):
         incomplete_resource.n_cores
 
-    with pytest.raises(NotImplemented):
+    with pytest.raises(NotImplementedError):
         incomplete_resource.memory_per_core
+
+
+def test_cu_omp():
+    cu = scibs.CU(n_omp_threads=2)
+    assert cu.n_cores_per_cu == 2
+
+    cu = scibs.CU(n_mpi_tasks=3)
+    assert cu.n_cores_per_cu == 3
+
+
+def test_just_cores_resource():
+    just_cores = scibs.JustCoresResource()
+    assert just_cores.n_cores == 1
+
+    just_cores = scibs.JustCoresResource()
+    assert just_cores.memory_per_core is None
+
+    just_cores = scibs.JustCoresResource(n_cores=2, total_memory=4)
+    assert just_cores.memory_per_core == 2.0

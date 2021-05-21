@@ -4,6 +4,7 @@ from .local_bs import LocalBS
 
 from .job import Job
 
+from .resources import Resource
 from .resources import MPIResource, OMPResource, CUResource, CU
 from .resources import JustCoresResource
 

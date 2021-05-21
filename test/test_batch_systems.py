@@ -21,8 +21,6 @@ def mpi_resources(three_hours):
 def test_lsf_mpi(mpi_resources):
     job = scibs.Job(["foo", "--bar"], mpi_resources, name="foo_bar")
 
-    lsf = scibs.LSF()
-
     # fmt: off
     expected = [
         "bsub",
@@ -34,16 +32,20 @@ def test_lsf_mpi(mpi_resources):
     ]
     # fmt: on
 
+    # No real need to use contex management. LSF is just sends the instructions
+    # to the actual batch system.
+    lsf = scibs.LSF()
     assert lsf.cmdline(job) == expected
 
 
 def test_local_mpi(mpi_resources):
     job = scibs.Job(["foo", "--bar"], mpi_resources, name="foo_bar")
 
-    local = scibs.LocalBS()
-
     expected = "mpirun -np 10 foo --bar"
-    assert local.cmdline(job) == expected
+
+    # To be safe let's use the context manager.
+    with scibs.LocalBS() as local:
+        assert local.cmdline(job) == expected
 
 
 @pytest.fixture
