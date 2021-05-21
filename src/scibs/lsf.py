@@ -24,9 +24,6 @@ class LSF(SciBS):
         if job.name is not None:
             c += ["-J", job.name]
 
-        if hasattr(r, "lsf_args"):
-            c += r.lsf_args
-
         if r.wall_clock is not None:
             c += ["-W", scibs.hhmm(r.wall_clock)]
 
