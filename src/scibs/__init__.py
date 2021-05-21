@@ -11,7 +11,9 @@ from .submission_policies import SubprocessSubmissionPolicy, DebugSubmissionPoli
 from .submission_policies import MultiSubmissionPolicy
 from .wrap_policies import WrapPolicy, DefaultWrapPolicy, EulerWrapPolicy
 
+from .schedules import Schedule, GreedySchedule
+
 from .scibs import SciBS
 from .lsf import LSF, EulerLSF
 from .local_bs import LocalBS
-from .async_local_bs import AsyncLocalBS
+from .sequential_local_bs import SequentialLocalBS

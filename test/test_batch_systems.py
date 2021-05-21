@@ -44,7 +44,7 @@ def test_local_mpi(mpi_resources):
     expected = "mpirun -np 10 foo --bar"
 
     # To be safe let's use the context manager.
-    with scibs.LocalBS() as local:
+    with scibs.SequentialLocalBS() as local:
         assert local.cmdline(job) == expected
 
 
@@ -108,12 +108,12 @@ def test_eulerlsf_omp(omp_resources):
     assert dbg_policy.cwd == wd
 
 
-def test_local_omp(omp_resources):
+def test_sequential_omp(omp_resources):
     wd = "wd"
     job = scibs.Job(["foo", "--bar"], omp_resources, name="foo_bar", cwd=wd)
 
     dbg_policy = scibs.DebugSubmissionPolicy()
-    local = scibs.LocalBS(submission_policy=dbg_policy)
+    local = scibs.SequentialLocalBS(submission_policy=dbg_policy)
 
     expected = "export OMP_NUM_THREADS=6; foo --bar"
 
@@ -132,3 +132,23 @@ def test_scibs_interface(omp_resources):
     bs = IncompleteSciBS()
     with pytest.raises(NotImplementedError):
         bs.submit(job)
+
+
+def test_local_bs():
+    # fmt: off
+    jobs = [
+        scibs.Job(
+            ["pwd"],
+            scibs.MPIResource(n_mpi_tasks=n, wall_clock=datetime.timedelta(hours=h)),
+            name=f"PWD-{k}",
+        )
+        for k, (n, h) in enumerate(
+            zip([1, 1, 1, 2, 4, 6, 2, 1, 1],
+                [2, 1, 3, 4, 23, 3, 2, 5, 3])
+        )
+    ]
+    # fmt: on
+
+    with scibs.LocalBS() as bs:
+        for job in jobs:
+            bs.submit(job)
