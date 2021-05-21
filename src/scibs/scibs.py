@@ -1,5 +1,15 @@
 class SciBS:
-    """A Scientific Batch System."""
+    """A Scientific Batch System.
+
+    Note: Batch systems should be used inside a `with` block to allow the batch
+    system to acquire and release resources properly.
+    """
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        pass
 
     def submit(self, job):
         raise NotImplementedError(
