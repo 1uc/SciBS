@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2021 ETH Zurich, Luc Grosheintz-Laval
+
 def hhmm(t):
     days = t.days
     hours, seconds = divmod(t.seconds, 3600)

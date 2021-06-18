@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2021 ETH Zurich, Luc Grosheintz-Laval
+
 class WrapPolicy:
     def __call__(self, job):
         raise NotImplementedError(
