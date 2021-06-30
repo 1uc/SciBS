@@ -105,6 +105,37 @@ def test_eulerlsf_omp(omp_resources):
 
 
 @pytest.fixture
+def just_gpus_resource():
+    n_gpus = 2
+    mem = 16 * 10 ** 6
+
+    return scibs.JustGPUsResource(n_gpus=n_gpus, total_memory=mem)
+
+
+def test_just_gpus_resource(just_gpus_resource):
+    wd = "wd"
+    job = scibs.Job(["foo", "--bar"], just_gpus_resource, name="foo_bar", cwd=wd)
+
+    dbg_policy = scibs.DebugSubmissionPolicy()
+    lsf = scibs.LSF(submission_policy=dbg_policy)
+
+    # fmt: off
+    expected = [
+        "bsub",
+        "-J", "foo_bar",
+        "-R", "rusage[mem=16]",
+        "-n", "1",
+        "-R", "rusage[ngpus_excl_p=2]",
+        "foo --bar"
+    ]
+    # fmt: on
+
+    lsf.submit(job)
+    assert dbg_policy.cmd == expected
+    assert dbg_policy.cwd == wd
+
+
+@pytest.fixture
 def just_cores_resource():
     n_cores = 16
     mem = 16 * 10 ** 6

@@ -2,7 +2,7 @@ from .job import Job
 
 from .resources import Resource
 from .resources import MPIResource, OMPResource, CUResource, CU
-from .resources import JustCoresResource
+from .resources import JustCoresResource, JustGPUsResource
 
 from .utilities import hhmm
 

@@ -38,7 +38,8 @@ class LSF(SciBS):
 
         c += ["-n", str(r.n_cores)]
 
-        # TODO ask for GPUs if required.
+        if r.needs_gpus:
+            c += ["-R", f"rusage[ngpus_excl_p={r.n_gpus_per_process}]"]
 
         c += self.site_specific_flags(job)
         c += [self.wrap(job)]

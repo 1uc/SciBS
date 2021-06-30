@@ -17,6 +17,13 @@ class Resource:
         )
 
     @property
+    def n_gpus_per_process(self):
+        """Total number of GPUs requested per process."""
+        raise NotImplementedError(
+            f"{self.__class__.__name__} hasn't implemented `n_gpus_per_process`."
+        )
+
+    @property
     def memory_per_core(self):
         """Memory requested per core."""
         raise NotImplementedError(
@@ -30,6 +37,10 @@ class Resource:
     @property
     def needs_omp(self):
         return hasattr(self, "n_omp_threads") and self.n_omp_threads
+
+    @property
+    def needs_gpus(self):
+        return hasattr(self, "n_gpus_per_process") and self.n_gpus_per_process
 
 
 class MPIResource(Resource):
@@ -146,6 +157,32 @@ class CUResource(Resource):
     def memory_per_core(self):
         total_memory = self.mem_per_cu * self.n_cus
         return total_memory / self.n_cores
+
+
+class JustGPUsResource(Resource):
+    """Just request `n` GPUs and a core, no MPI or OpenMP implied."""
+
+    def __init__(self, n_gpus, total_memory=None, wall_clock=None):
+        self.wall_clock = wall_clock
+
+        self._n_cores = 1
+        self._n_gpus = n_gpus
+        self._total_memory = total_memory
+
+    @property
+    def n_cores(self):
+        return self._n_cores
+
+    @property
+    def n_gpus_per_process(self):
+        return self._n_gpus
+
+    @property
+    def memory_per_core(self):
+        if self._total_memory is None:
+            return None
+
+        return self._total_memory // self._n_cores
 
 
 class JustCoresResource(Resource):

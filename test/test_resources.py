@@ -86,3 +86,15 @@ def test_just_cores_resource():
 
     just_cores = scibs.JustCoresResource(n_cores=2, total_memory=4)
     assert just_cores.memory_per_core == 2.0
+
+
+def test_just_gpus_resources():
+    r = scibs.JustGPUsResource(3)
+    assert r.n_cores == 1
+    assert r.n_gpus_per_process == 3
+    assert r.memory_per_core is None
+
+    r = scibs.JustGPUsResource(n_gpus=4, total_memory=4)
+    assert r.n_cores == 1
+    assert r.n_gpus_per_process == 4
+    assert r.memory_per_core == 4.0
