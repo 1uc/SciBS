@@ -108,16 +108,33 @@ def test_eulerlsf_omp(omp_resources):
     assert dbg_policy.cwd == wd
 
 
-def test_sequential_omp(omp_resources):
+@pytest.fixture
+def just_cores_resource():
+    n_cores = 16
+    mem = 16 * 10 ** 6
+
+    return scibs.JustCoresResource(n_cores=n_cores, total_memory=mem)
+
+
+def test_just_cores_resource(just_cores_resource):
     wd = "wd"
-    job = scibs.Job(["foo", "--bar"], omp_resources, name="foo_bar", cwd=wd)
+    job = scibs.Job(["foo", "--bar"], just_cores_resource, name="foo_bar", cwd=wd)
 
     dbg_policy = scibs.DebugSubmissionPolicy()
-    local = scibs.SequentialLocalBS(submission_policy=dbg_policy)
+    lsf = scibs.EulerLSF(submission_policy=dbg_policy)
 
-    expected = "export OMP_NUM_THREADS=6; foo --bar"
+    # fmt: off
+    expected = [
+        "bsub",
+        "-J", "foo_bar",
+        "-R", "rusage[mem=1]",
+        "-n", "16",
+        "-R", "span[ptile=16]",
+        "foo --bar"
+    ]
+    # fmt: on
 
-    local.submit(job)
+    lsf.submit(job)
     assert dbg_policy.cmd == expected
     assert dbg_policy.cwd == wd
 
@@ -132,6 +149,20 @@ def test_scibs_interface(omp_resources):
     bs = IncompleteSciBS()
     with pytest.raises(NotImplementedError):
         bs.submit(job)
+
+
+def test_sequential_omp(omp_resources):
+    wd = "wd"
+    job = scibs.Job(["foo", "--bar"], omp_resources, name="foo_bar", cwd=wd)
+
+    dbg_policy = scibs.DebugSubmissionPolicy()
+    local = scibs.SequentialLocalBS(submission_policy=dbg_policy)
+
+    expected = "export OMP_NUM_THREADS=6; foo --bar"
+
+    local.submit(job)
+    assert dbg_policy.cmd == expected
+    assert dbg_policy.cwd == wd
 
 
 def test_local_bs():

@@ -149,7 +149,9 @@ class CUResource(Resource):
 
 
 class JustCoresResource(Resource):
-    def __init__(self, n_cores=1, total_memory=None):
+    def __init__(self, n_cores=1, total_memory=None, wall_clock=None):
+        self.wall_clock = wall_clock
+
         self._n_cores = n_cores
         self._total_memory = total_memory
 
@@ -162,4 +164,4 @@ class JustCoresResource(Resource):
         if self._total_memory is None:
             return None
 
-        return self._total_memory / self._n_cores
+        return self._total_memory // self._n_cores
