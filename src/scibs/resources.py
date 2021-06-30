@@ -25,11 +25,11 @@ class Resource:
 
     @property
     def needs_mpi(self):
-        return hasattr(self, "n_mpi_tasks") and self.n_mpi_tasks is not None
+        return hasattr(self, "n_mpi_tasks") and self.n_mpi_tasks
 
     @property
     def needs_omp(self):
-        return hasattr(self, "n_omp_threads") and self.n_omp_threads is not None
+        return hasattr(self, "n_omp_threads") and self.n_omp_threads
 
 
 class MPIResource(Resource):

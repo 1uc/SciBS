@@ -5,7 +5,9 @@ from scibs import SciBS
 class LSF(SciBS):
     def __init__(self, submission_policy=None, wrap_policy=None):
         if submission_policy is None:
-            submission_policy = scibs.SubprocessSubmissionPolicy()
+            submission_policy = scibs.MultiSubmissionPolicy(
+                [scibs.StdOutSubmissionPolicy(), scibs.SubprocessSubmissionPolicy()]
+            )
 
         if wrap_policy is None:
             wrap_policy = scibs.DefaultWrapPolicy()
@@ -56,11 +58,6 @@ class EulerLSF(LSF):
     def __init__(self, submission_policy=None, wrap_policy=None):
         if wrap_policy is None:
             wrap_policy = scibs.EulerWrapPolicy()
-
-        if submission_policy is None:
-            submission_policy = scibs.MultiSubmissionPolicy(
-                [scibs.StdOutSubmissionPolicy(), scibs.SubprocessSubmissionPolicy()]
-            )
 
         super().__init__(submission_policy=submission_policy, wrap_policy=wrap_policy)
 
