@@ -101,7 +101,7 @@ class CU:
 
         2. A hybrid MPI/CUDA simulation might ask for 1 MPI task and 1 GPU.
 
-    Note: One OpenMP threads is assumed to run on the core assigned to the MPI
+    Note: One OpenMP thread is assumed to run on the core assigned to the MPI
           task.
     """
 
