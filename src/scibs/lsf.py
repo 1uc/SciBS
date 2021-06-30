@@ -62,5 +62,6 @@ class EulerLSF(LSF):
         super().__init__(submission_policy=submission_policy, wrap_policy=wrap_policy)
 
     def site_specific_flags(self, job):
+        # The part I want to target has 2x64 cores.
         ptile = min(128, job.resources.n_cores)
         return ["-R", f"span[ptile={ptile}]"]

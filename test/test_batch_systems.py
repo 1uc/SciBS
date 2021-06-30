@@ -5,14 +5,10 @@ import pytest
 
 
 @pytest.fixture
-def three_hours():
-    return datetime.timedelta(hours=3)
-
-
-@pytest.fixture
-def mpi_resources(three_hours):
+def mpi_resources():
     n_tasks = 10
     mem_per_task = 50 * 10 ** 6
+    three_hours = datetime.timedelta(hours=3)
     return scibs.MPIResource(
         n_mpi_tasks=n_tasks, wall_clock=three_hours, mem_per_task=mem_per_task
     )
