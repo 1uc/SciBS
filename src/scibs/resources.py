@@ -17,13 +17,6 @@ class Resource:
         )
 
     @property
-    def n_gpus_per_process(self):
-        """Total number of GPUs requested per process."""
-        raise NotImplementedError(
-            f"{self.__class__.__name__} hasn't implemented `n_gpus_per_process`."
-        )
-
-    @property
     def memory_per_core(self):
         """Memory requested per core."""
         raise NotImplementedError(
