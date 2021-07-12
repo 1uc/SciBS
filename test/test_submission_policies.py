@@ -10,7 +10,7 @@ import pytest
 
 def test_subprocess_policy():
     policy = scibs.SubprocessSubmissionPolicy()
-    policy(["pwd"], cwd=".")
+    policy(["pwd"], cwd=".", env=None)
 
 
 def test_stdout_policy():
@@ -18,7 +18,7 @@ def test_stdout_policy():
 
     stdout = io.StringIO()
     with contextlib.redirect_stdout(stdout):
-        policy(["pwd"], cwd=".")
+        policy(["pwd"], cwd=".", env=None)
 
     # strip trailing newline.
     text = stdout.getvalue()[:-1]
@@ -32,7 +32,7 @@ def test_stdout_nocwd():
 
     stdout = io.StringIO()
     with contextlib.redirect_stdout(stdout):
-        policy(["pwd"], None)
+        policy(["pwd"], None, env=None)
 
     # strip trailing newline.
     text = stdout.getvalue()[:-1]
@@ -49,7 +49,7 @@ def test_policy_interface():
     policy = IncompleteSubmissionPolicy()
 
     with pytest.raises(NotImplementedError):
-        policy(["pwd"], cwd=".")
+        policy(["pwd"], cwd=".", env=None)
 
 
 def test_multi_policy():
@@ -60,7 +60,7 @@ def test_multi_policy():
 
     stdout = io.StringIO()
     with contextlib.redirect_stdout(stdout):
-        policy(["pwd"], cwd=".")
+        policy(["pwd"], cwd=".", env=None)
 
     # strip trailing newline.
     text = stdout.getvalue()[:-1]
@@ -70,3 +70,4 @@ def test_multi_policy():
 
     assert dbg_policy.cwd == "."
     assert dbg_policy.cmd == ["pwd"]
+    assert dbg_policy.env == None

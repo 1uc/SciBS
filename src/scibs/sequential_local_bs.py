@@ -33,7 +33,7 @@ class SequentialLocalBS(scibs.SciBS):
 
     def submit(self, job):
         cmd = self.cmdline(job)
-        self._submission_policy(cmd, cwd=job.cwd)
+        self._submission_policy(cmd, cwd=job.cwd, env=job.env)
 
     def cmdline(self, job):
         return self.wrap(job)

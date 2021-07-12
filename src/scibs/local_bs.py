@@ -62,7 +62,7 @@ class LocalBS(scibs.SciBS):
 
 async def _launch_job(wrap_policy, job_id, job):
     cmd = wrap_policy(job)
-    proc = await asyncio.create_subprocess_shell(cmd, cwd=job.cwd)
+    proc = await asyncio.create_subprocess_shell(cmd, cwd=job.cwd, env=job.env)
     await proc.wait()
     return {"job_id": job_id}
 

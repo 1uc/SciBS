@@ -5,7 +5,7 @@ import subprocess
 
 
 class SubmissionPolicy:
-    def __call__(self, cmd, cwd):
+    def __call__(self, cmd, cwd, env):
         raise NotImplementedError(
             f"{self.__class__.__name__} hasn't implemented `__call__`."
         )
@@ -18,12 +18,12 @@ class SubprocessSubmissionPolicy(SubmissionPolicy):
 
         self._kwargs = subprocess_kwargs
 
-    def __call__(self, cmd, cwd):
-        subprocess.run(cmd, **self._kwargs, cwd=cwd)
+    def __call__(self, cmd, cwd, env):
+        subprocess.run(cmd, **self._kwargs, cwd=cwd, env=env)
 
 
 class StdOutSubmissionPolicy(SubmissionPolicy):
-    def __call__(self, cmd, cwd):
+    def __call__(self, cmd, cwd, env):
         if cwd is None:
             print(" ".join(cmd))
         else:
@@ -31,15 +31,16 @@ class StdOutSubmissionPolicy(SubmissionPolicy):
 
 
 class DebugSubmissionPolicy(SubmissionPolicy):
-    def __call__(self, cmd, cwd):
+    def __call__(self, cmd, cwd, env):
         self.cmd = cmd
         self.cwd = cwd
+        self.env = env
 
 
 class MultiSubmissionPolicy(SubmissionPolicy):
     def __init__(self, policies):
         self._policies = policies
 
-    def __call__(self, cmd, cwd):
+    def __call__(self, cmd, cwd, env):
         for policy in self._policies:
-            policy(cmd, cwd)
+            policy(cmd, cwd, env)
