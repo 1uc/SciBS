@@ -2,6 +2,8 @@
 # Copyright (c) 2021 ETH Zurich, Luc Grosheintz-Laval
 
 import psutil
+import os
+import datetime
 
 
 class Schedule:
@@ -31,8 +33,11 @@ class Schedule:
 class GreedySchedule(Schedule):
     """The most simple, i.e. greedy, scheduling possible."""
 
-    def __init__(self, jobs):
-        self._local_resources = LocalResources()
+    def __init__(self, jobs, local_resources=None):
+        if local_resources is None:
+            local_resources = LocalResources()
+
+        self._local_resources = local_resources
         self._jobs = sorted(jobs, key=self._job_order)
         self._job_info = [
             {"id": k, "complete": False, "scheduled": False}
@@ -57,9 +62,8 @@ class GreedySchedule(Schedule):
             return acquired_resources
 
         try:
-            return next(
-                iter(
-                    (job_id, self._jobs[job_id])
+            job_id = next(
+                iter(job_id
                     for job_id in self._unscheduled_jobs
                     if acquire(job_id) is not None
                 )
@@ -67,6 +71,10 @@ class GreedySchedule(Schedule):
 
         except StopIteration:
             return None
+
+        job = self._jobs[job_id]
+        allocated_resources = self._job_info[job_id]["resources"]
+        return job_id, job, allocated_resources
 
     def complete(self, job_id):
         self._job_info[job_id]["complete"] = True
@@ -120,3 +128,43 @@ class LocalResources:
     def release(self, acquired_resources):
         """Return the acquired resources once they are no longer used."""
         self._cores += acquired_resources["cores"]
+        acquired_resources.pop("cores", None)
+
+
+class LocalGPUResources:
+    def __init__(self, available_gpus=None):
+        """Create the available GPU resources.
+
+        Arguments:
+            available_gpus  Either a list of integers, or a comma separated
+                            string, e.g., the environment variable
+                            CUDA_VISIBLE_DEVICE.
+        """
+
+        if available_gpus is None:
+            available_gpus = os.environ["CUDA_VISIBLE_DEVICES"]
+
+        if isinstance(available_gpus, str):
+            available_gpus = available_gpus.split(",")
+            available_gpus = [int(gpu_id) for gpu_id in available_gpus]
+
+        self._gpus = available_gpus
+
+    def acquire(self, resources):
+        assert resources.needs_gpus
+
+        n_requested_gpus = resources.n_gpus_per_process
+        assert n_requested_gpus > 0
+
+        # Deal with insufficient number of GPUs.
+        if n_requested_gpus > len(self._gpus):
+            return None
+
+        gpu_ids = self._gpus[:n_requested_gpus]
+        self._gpus = self._gpus[n_requested_gpus:]
+
+        return {"gpu_ids": gpu_ids}
+
+    def release(self, acquired_resources):
+        self._gpus += acquired_resources["gpu_ids"]
+        acquired_resources.pop("gpu_ids", None)

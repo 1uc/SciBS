@@ -36,6 +36,12 @@ class Job:
 
         return self._env
 
+    @env.setter
+    def env(self, env):
+        """The shell environment that should be used."""
+
+        self._env = env
+
     @property
     def resources(self):
         """These are the resources required to run this job.

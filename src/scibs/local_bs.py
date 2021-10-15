@@ -1,7 +1,8 @@
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2021 ETH Zurich, Luc Grosheintz-Laval
 
-import asyncio
+import os
+import subprocess
 import datetime
 
 import scibs
@@ -19,15 +20,18 @@ class LocalBS(scibs.SciBS):
 
           The important thing to observe is the `shell=True` part.
 
-    NOTE: This will call `asyncio.run`, starting an event loop. This is not
-          a problem unless you're already using `asyncio`.
     """
 
-    def __init__(self, wrap_policy=None):
+    def __init__(self, wrap_policy=None, resource_policy=None, local_resources=None):
         if wrap_policy is None:
             wrap_policy = scibs.DefaultWrapPolicy()
 
+        if resource_policy is None:
+            resource_policy = scibs.DefaultResourcePolicy()
+
+        self._local_resources = local_resources
         self._wrap_policy = wrap_policy
+        self._resource_policy = resource_policy
         self._context = None
 
     def __enter__(self):
@@ -56,19 +60,46 @@ class LocalBS(scibs.SciBS):
     def _run_all(self):
         self._ensure_with_context()
 
-        job_schedule = scibs.GreedySchedule(self._context["jobs"])
-        asyncio.run(_schedule_jobs(self._wrap_policy, job_schedule))
+        job_schedule = scibs.GreedySchedule(
+            self._context["jobs"], self._local_resources
+        )
+        _schedule_jobs(self._wrap_policy, self._resource_policy, job_schedule)
 
 
-async def _launch_job(wrap_policy, job_id, job):
+def _launch_job(wrap_policy, resource_policy, scheduled_job):
+    job_id, job, acquired_resources = scheduled_job
+
+    resource_policy(job, acquired_resources)
     cmd = wrap_policy(job)
-    proc = await asyncio.create_subprocess_shell(cmd, cwd=job.cwd, env=job.env)
-    await proc.wait()
-    return {"job_id": job_id}
+
+    stdout = open(os.path.join(job.cwd, "cout"), "w")
+    stderr = open(os.path.join(job.cwd, "cerr"), "w")
+
+    proc = subprocess.Popen(
+        cmd, cwd=job.cwd, stdout=stdout, stderr=stderr, env=job.env, shell=True
+    )
+
+    return proc, [stdout, stderr]
 
 
-async def _schedule_jobs(wrap_policy, job_schedule):
-    pending = []
+def _schedule_jobs(wrap_policy, resource_policy, job_schedule):
+    pending = {}
+    processes = {}
+
+    def _wait():
+        pid, _ = os.wait()
+        assert pid in pending, "`os.wait` returned a PID that's not ours."
+
+        job_id = pending.pop(pid)
+        proc, files = processes.pop(pid)
+
+        assert proc.pid == pid
+
+        for f in files:
+            f.close()
+
+        job_schedule.complete(job_id)
+
     while not job_schedule.empty():
         next_job = job_schedule.next_job()
 
@@ -77,18 +108,18 @@ async def _schedule_jobs(wrap_policy, job_schedule):
         ), "It looks like there are no jobs pending and yet nothing can be submitted."
 
         if next_job is None:
-            done, pending = await asyncio.wait(
-                pending, return_when=asyncio.FIRST_COMPLETED
-            )
-            pending = list(pending)
-
-            for task in done:
-                result = task.result()
-                job_schedule.complete(result["job_id"])
+            _wait()
 
         else:
-            job_id, job = next_job
-            pending.append(asyncio.create_task(_launch_job(wrap_policy, job_id, job)))
+            proc, files = _launch_job(wrap_policy, resource_policy, next_job)
+            pid = proc.pid
 
-    _, pending = await asyncio.wait(pending, return_when=asyncio.ALL_COMPLETED)
-    assert len(pending) == 0
+            assert (
+                pid not in processes
+            ), "The OS reused a PID and we can't deal with it."
+
+            pending[pid] = next_job[0]
+            processes[pid] = (proc, files)
+
+    while pending:
+        _wait()

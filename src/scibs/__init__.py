@@ -13,8 +13,10 @@ from .submission_policies import SubmissionPolicy, StdOutSubmissionPolicy
 from .submission_policies import SubprocessSubmissionPolicy, DebugSubmissionPolicy
 from .submission_policies import MultiSubmissionPolicy
 from .wrap_policies import WrapPolicy, DefaultWrapPolicy, EulerWrapPolicy
+from .resource_policies import DefaultResourcePolicy, GPUResourcePolicy
 
 from .schedules import Schedule, GreedySchedule
+from .schedules import LocalResources, LocalGPUResources
 
 from .scibs import SciBS
 from .lsf import LSF, EulerLSF
