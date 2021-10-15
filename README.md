@@ -58,12 +58,14 @@ there's a `SciBS` which just submits stuff on the local computer:
 which will attempt to run as many jobs simultaneously as the host can deal
 with.
 
-## Configuration
+## Contributing
 This "library" should be treated as code. Code to make stuff happen in your
 environment. It is reasonably easy to implement the specific cases one needs,
 implementing them all is hard. Therefore, please treat the code as code and
 extend it such that it covers you needs. It's open-source in the hope that it
 may help others cope with our scientific batch systems.
+
+Having said that, I'd be delighted about any contributions.
 
 ## Licence
 The software was initially developed at ETH Zurich and is distributed under the
