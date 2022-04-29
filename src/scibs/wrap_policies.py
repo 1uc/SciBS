@@ -46,10 +46,10 @@ class DefaultWrapPolicy(WrapPolicy):
 class SBatchWrapPolicy(WrapPolicy):
     """Used when submitting sbatch files.
     
-    On SLURM one can write batch files, say `script.sbatch`. These can be
+    With SLURM one can write batch files, say `script.sbatch`. These can be
     run simply as `sbatch script.sbatch`. In these cases the `script.sbatch`
     is assumed to contain the logic about which commands to run and how to
-    do the equivalent of `mpi -n4 ...` (if needed).
+    do the equivalent of `mpirun -n4 ...` (if needed).
 
     This policy retains the list of string command format, and therefore doesn't
     require `shell=True`.
