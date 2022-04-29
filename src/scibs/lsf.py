@@ -45,12 +45,12 @@ class LSF(SciBS):
             c += ["-R", f"rusage[ngpus_excl_p={r.n_gpus_per_process}]"]
 
         c += self.site_specific_flags(job)
-        c += [self.wrap(job)]
+        c += self.wrap(job)
 
         return c
 
     def wrap(self, job):
-        return self._wrap_policy(job)
+        return [self._wrap_policy(job)]
 
     def site_specific_flags(self, job):
         return []

@@ -43,6 +43,22 @@ class DefaultWrapPolicy(WrapPolicy):
         return " ".join(job.cmd)
 
 
+class SBatchWrapPolicy(WrapPolicy):
+    """Used when submitting sbatch files.
+    
+    On SLURM one can write batch files, say `script.sbatch`. These can be
+    run simply as `sbatch script.sbatch`. In these cases the `script.sbatch`
+    is assumed to contain the logic about which commands to run and how to
+    do the equivalent of `mpi -n4 ...` (if needed).
+
+    This policy retains the list of string command format, and therefore doesn't
+    require `shell=True`.
+    """
+
+    def __call__(self, job):
+        return job.cmd
+
+
 class EulerWrapPolicy(DefaultWrapPolicy):
     def wrap_cmd_mpi_omp(self, job):
         cmd = job.cmd

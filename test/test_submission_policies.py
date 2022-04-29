@@ -71,3 +71,15 @@ def test_multi_policy():
     assert dbg_policy.cwd == "."
     assert dbg_policy.cmd == ["pwd"]
     assert dbg_policy.env == None
+
+
+def test_slurm_submission_policy_parse():
+    output = """
+sbatch: INFO: Activating auto partition selection plugin, please report errors to HPC/CS
+sbatch: INFO: Job specifies cpu constraint, setting --constraint=[skl|clx]
+Submitted batch job 408469
+"""
+
+    policy = scibs.SLURMSubmissionPolicy()
+    job_id = policy.parse_stdout(output)
+    assert job_id == 408469

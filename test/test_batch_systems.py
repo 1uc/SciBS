@@ -213,3 +213,105 @@ def test_local_bs():
     with scibs.LocalBS() as bs:
         for job in jobs:
             bs.submit(job)
+
+
+def test_bb5_sbatch_cores_only(just_cores_resource):
+    wd = "wd"
+    job = scibs.Job(["foo.sbatch", "args"], just_cores_resource, name="foo_bar", cwd=wd)
+
+    dbg_policy = scibs.DebugSubmissionPolicy()
+    bb5 = scibs.SBatchBB5(submission_policy=dbg_policy)
+
+    # fmt: off
+    expected = [
+        "sbatch",
+        "-J", "foo_bar",
+        "--mem-per-cpu=1",
+        "--cpus-per-task=16",
+        "foo.sbatch",
+        "args"
+    ]
+    # fmt: on
+
+    bb5.submit(job)
+    assert dbg_policy.cmd == expected
+    assert dbg_policy.cwd == wd
+
+
+def test_bb5_sbatch_hybrid(mpi_omp_resources):
+    wd = "wd"
+    mpi_omp_resources.wall_clock=datetime.timedelta(hours=1, minutes=20)
+    job = scibs.Job(["foo.sbatch", "args"], mpi_omp_resources, name="foo_bar", cwd=wd)
+
+    dbg_policy = scibs.DebugSubmissionPolicy()
+    bb5 = scibs.SBatchBB5(submission_policy=dbg_policy)
+
+    # fmt: off
+    expected = [
+        "sbatch",
+        "-J", "foo_bar",
+        "--time", "01:20:00",
+        "--mem-per-cpu=12",
+        "--ntasks=3",
+        "--cpus-per-task=4",
+        "foo.sbatch",
+        "args"
+
+    ]
+    # fmt: on
+
+    bb5.submit(job)
+    assert dbg_policy.cmd == expected
+    assert dbg_policy.cwd == wd
+
+
+def test_bb5_singleton(mpi_omp_resources):
+    wd = "wd"
+    job = scibs.Job(["foo.sbatch", "args"], mpi_omp_resources, name="foo_bar", cwd=wd)
+
+    dbg_policy = scibs.DebugSubmissionPolicy()
+    bb5 = scibs.SBatchBB5(submission_policy=dbg_policy)
+
+    # fmt: off
+    expected = [
+        "sbatch",
+        "--dependency=singleton",
+        "-J", "foo_bar",
+        "--mem-per-cpu=12",
+        "--ntasks=3",
+        "--cpus-per-task=4",
+        "foo.sbatch",
+        "args"
+
+    ]
+    # fmt: on
+
+    bb5.submit(job, dependency={"condition": "singleton"})
+    assert dbg_policy.cmd == expected
+    assert dbg_policy.cwd == wd
+
+
+def test_bb5_afterok(mpi_omp_resources):
+    wd = "wd"
+    job = scibs.Job(["foo.sbatch", "args"], mpi_omp_resources, name="foo_bar", cwd=wd)
+
+    dbg_policy = scibs.DebugSubmissionPolicy()
+    bb5 = scibs.SBatchBB5(submission_policy=dbg_policy)
+
+    # fmt: off
+    expected = [
+        "sbatch",
+        "--dependency=afterok:123",
+        "-J", "foo_bar",
+        "--mem-per-cpu=12",
+        "--ntasks=3",
+        "--cpus-per-task=4",
+        "foo.sbatch",
+        "args"
+
+    ]
+    # fmt: on
+
+    bb5.submit(job, dependency={"condition": "afterok", "job_id": 123})
+    assert dbg_policy.cmd == expected
+    assert dbg_policy.cwd == wd
