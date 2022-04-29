@@ -5,6 +5,7 @@
 import scibs
 from scibs import SciBS
 
+
 class SLURM(SciBS):
     def __init__(self, submission_policy=None, wrap_policy=None):
         if submission_policy is None:
@@ -71,11 +72,12 @@ class SLURM(SciBS):
 
 class SBatchMixin:
     """A queue for submitting sbatch scripts.
-    
+
     This mixin modifies a queue/batch system differ to expect sbatch scripts,
     and only works for those. If you want to submit regular commands, use
     `SLURM`.
     """
+
     def __init__(self, *args, wrap_policy=None, **kwargs):
         if wrap_policy is None:
             wrap_policy = scibs.SBatchWrapPolicy()

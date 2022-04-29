@@ -10,7 +10,7 @@ import pytest
 @pytest.fixture
 def mpi_resources():
     n_tasks = 10
-    mem_per_task = 50 * 10 ** 6
+    mem_per_task = 50 * 10**6
     three_hours = datetime.timedelta(hours=3)
     return scibs.MPIResource(
         n_mpi_tasks=n_tasks, wall_clock=three_hours, mem_per_task=mem_per_task
@@ -52,7 +52,7 @@ def mpi_omp_resources():
     n_threads = 4
     n_tasks = 1
     n_cus = 3
-    mem_per_cu = 48 * 10 ** 6
+    mem_per_cu = 48 * 10**6
     cu = scibs.CU(n_omp_threads=n_threads, n_mpi_tasks=n_tasks)
 
     return scibs.CUResource(cu, n_cus, mem_per_cu=mem_per_cu)
@@ -80,7 +80,7 @@ def test_eulerlsf_mpi_omp(mpi_omp_resources):
 @pytest.fixture
 def omp_resources():
     n_threads = 6
-    mem = 120 * 10 ** 6
+    mem = 120 * 10**6
     return scibs.OMPResource(n_omp_threads=n_threads, total_memory=mem)
 
 
@@ -110,7 +110,7 @@ def test_eulerlsf_omp(omp_resources):
 @pytest.fixture
 def just_gpus_resource():
     n_gpus = 2
-    mem = 16 * 10 ** 6
+    mem = 16 * 10**6
 
     return scibs.JustGPUsResource(n_gpus=n_gpus, total_memory=mem)
 
@@ -141,7 +141,7 @@ def test_just_gpus_resource(just_gpus_resource):
 @pytest.fixture
 def just_cores_resource():
     n_cores = 16
-    mem = 16 * 10 ** 6
+    mem = 16 * 10**6
 
     return scibs.JustCoresResource(n_cores=n_cores, total_memory=mem)
 
@@ -240,7 +240,7 @@ def test_bb5_sbatch_cores_only(just_cores_resource):
 
 def test_bb5_sbatch_hybrid(mpi_omp_resources):
     wd = "wd"
-    mpi_omp_resources.wall_clock=datetime.timedelta(hours=1, minutes=20)
+    mpi_omp_resources.wall_clock = datetime.timedelta(hours=1, minutes=20)
     job = scibs.Job(["foo.sbatch", "args"], mpi_omp_resources, name="foo_bar", cwd=wd)
 
     dbg_policy = scibs.DebugSubmissionPolicy()

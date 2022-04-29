@@ -9,7 +9,7 @@ import pytest
 
 def test_mpi_resource():
     n_tasks = 10
-    mem_per_task = 50 * 10 ** 6
+    mem_per_task = 50 * 10**6
     wall_clock = datetime.timedelta(hours=3)
     r = scibs.MPIResource(
         n_mpi_tasks=n_tasks, wall_clock=wall_clock, mem_per_task=mem_per_task
@@ -27,7 +27,7 @@ def test_mpi_resource():
 
 def test_omp_resource():
     n_threads = 8
-    total_memory = 50 * 10 ** 6
+    total_memory = 50 * 10**6
     wall_clock = datetime.timedelta(hours=3)
     r = scibs.OMPResource(
         n_omp_threads=n_threads, wall_clock=wall_clock, total_memory=total_memory
@@ -47,7 +47,7 @@ def test_mpi_omp_resource():
     n_threads = 4
     n_tasks = 1
     n_cus = 3
-    mem_per_cu = 50 * 10 ** 6
+    mem_per_cu = 50 * 10**6
     cu = scibs.CU(n_omp_threads=n_threads, n_mpi_tasks=n_tasks)
 
     r = scibs.CUResource(cu, n_cus, mem_per_cu=mem_per_cu)

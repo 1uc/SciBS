@@ -3,6 +3,7 @@
 
 import os
 
+
 class ResourcePolicy:
     """Handle resources specifically allocated to one job.
 
@@ -14,14 +15,17 @@ class ResourcePolicy:
     `ResourcePolicy` are policies make sure that the job runs on the specific
     resources that have been allocated to it.
     """
+
     def __call__(self, job, acquired_resources):
         raise NotImplementedError(
             f"{self.__class__.__name__} hasn't implemented `__call__`."
         )
 
+
 class DefaultResourcePolicy(ResourcePolicy):
     def __call__(self, job, acquired_resources):
         pass
+
 
 class GPUResourcePolicy(ResourcePolicy):
     def __call__(self, job, acquired_resources):
@@ -32,4 +36,3 @@ class GPUResourcePolicy(ResourcePolicy):
             job.env = dict(os.environ)
 
         job.env["CUDA_VISIBLE_DEVICES"] = gpu_ids
-

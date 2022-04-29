@@ -63,7 +63,8 @@ class GreedySchedule(Schedule):
 
         try:
             job_id = next(
-                iter(job_id
+                iter(
+                    job_id
                     for job_id in self._unscheduled_jobs
                     if acquire(job_id) is not None
                 )

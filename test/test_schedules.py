@@ -6,7 +6,7 @@ import pytest
 
 def test_local_gpu_resource():
     available_gpus = [1, 2, 3, 5]
-    available_gpus_str = ",".join(map(str,available_gpus))
+    available_gpus_str = ",".join(map(str, available_gpus))
 
     lr = scibs.LocalGPUResources(available_gpus)
     assert lr._gpus == available_gpus

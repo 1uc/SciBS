@@ -15,7 +15,7 @@ def three_hours():
 @pytest.fixture
 def mpi_resources(three_hours):
     n_tasks = 10
-    mem_per_task = 50 * 10 ** 6
+    mem_per_task = 50 * 10**6
     return scibs.MPIResource(
         n_mpi_tasks=n_tasks, wall_clock=three_hours, mem_per_task=mem_per_task
     )
@@ -24,7 +24,7 @@ def mpi_resources(three_hours):
 @pytest.fixture
 def omp_resources():
     n_threads = 6
-    mem = 120 * 10 ** 6
+    mem = 120 * 10**6
     return scibs.OMPResource(n_omp_threads=n_threads, total_memory=mem)
 
 
@@ -33,7 +33,7 @@ def mpi_omp_resources():
     n_threads = 4
     n_tasks = 1
     n_cus = 3
-    mem_per_cu = 48 * 10 ** 6
+    mem_per_cu = 48 * 10**6
     cu = scibs.CU(n_omp_threads=n_threads, n_mpi_tasks=n_tasks)
 
     return scibs.CUResource(cu, n_cus, mem_per_cu=mem_per_cu)

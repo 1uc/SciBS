@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2021 ETH Zurich, Luc Grosheintz-Laval
 
+
 class WrapPolicy:
     def __call__(self, job):
         raise NotImplementedError(
@@ -45,7 +46,7 @@ class DefaultWrapPolicy(WrapPolicy):
 
 class SBatchWrapPolicy(WrapPolicy):
     """Used when submitting sbatch files.
-    
+
     With SLURM one can write batch files, say `script.sbatch`. These can be
     run simply as `sbatch script.sbatch`. In these cases the `script.sbatch`
     is assumed to contain the logic about which commands to run and how to
