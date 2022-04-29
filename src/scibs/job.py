@@ -54,3 +54,7 @@ class Job:
     def name(self):
         """Human-friendly name of the job."""
         return self._name
+
+    def relative_to_cwd(self, relative_path):
+        cwd = "." if self.cwd is None else self.cwd
+        return os.path.join(cwd, relative_path)

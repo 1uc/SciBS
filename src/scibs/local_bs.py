@@ -72,8 +72,8 @@ def _launch_job(wrap_policy, resource_policy, scheduled_job):
     resource_policy(job, acquired_resources)
     cmd = wrap_policy(job)
 
-    stdout = open(os.path.join(job.cwd, "cout"), "w")
-    stderr = open(os.path.join(job.cwd, "cerr"), "w")
+    stdout = open(job.relative_to_cwd("cout"), "w")
+    stderr = open(job.relative_to_cwd("cerr"), "w")
 
     proc = subprocess.Popen(
         cmd, cwd=job.cwd, stdout=stdout, stderr=stderr, env=job.env, shell=True
