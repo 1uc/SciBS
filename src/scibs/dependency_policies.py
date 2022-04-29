@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2022 Luc Grosheintz-Laval
+
 class SLURMDependencyPolicy:
     def __call__(self, dependency):
         condition = dependency["condition"]
