@@ -1,16 +1,21 @@
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2022 Luc Grosheintz-Laval
 
+import scibs
+
 
 class SLURMDependencyPolicy:
     def __call__(self, dependency):
-        condition = dependency["condition"]
-
-        if condition == "singleton":
+        if isinstance(dependency, scibs.Singleton):
             deps_str = "singleton"
 
+        elif isinstance(dependency, scibs.AfterOK):
+            deps_str = f"afterok:{dependency.job_id}"
+
+        elif isinstance(dependency, scibs.AfterAny):
+            deps_str = f"afterany:{dependency.job_id}"
+
         else:
-            job_id = dependency["job_id"]
-            deps_str = f"{condition}:{job_id}"
+            raise NotImplementedError("Missing case.")
 
         return f"--dependency={deps_str}"

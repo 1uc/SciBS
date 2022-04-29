@@ -286,7 +286,7 @@ def test_bb5_singleton(mpi_omp_resources):
     ]
     # fmt: on
 
-    bb5.submit(job, dependency={"condition": "singleton"})
+    bb5.submit(job, dependency=scibs.Singleton())
     assert dbg_policy.cmd == expected
     assert dbg_policy.cwd == wd
 
@@ -312,6 +312,6 @@ def test_bb5_afterok(mpi_omp_resources):
     ]
     # fmt: on
 
-    bb5.submit(job, dependency={"condition": "afterok", "job_id": 123})
+    bb5.submit(job, dependency=scibs.AfterOK(job_id=123))
     assert dbg_policy.cmd == expected
     assert dbg_policy.cwd == wd

@@ -3,6 +3,7 @@
 
 from .job import Job
 
+from .dependencies import Singleton, AfterOK, AfterAny
 from .dependency_policies import SLURMDependencyPolicy
 
 from .resources import Resource
